@@ -5,6 +5,32 @@ const port = 3000;
 // Middleware to parse JSON
 app.use(express.json());
 
+// Helper function to format date response
+function formatDateResponse(currentDate, futureDate, daysToAdd) {
+  return {
+    current_date: currentDate.toISOString().split('T')[0],
+    days_added: daysToAdd,
+    future_date: futureDate.toISOString().split('T')[0],
+    formatted_date: futureDate.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }),
+    formatted_date_no_year: futureDate.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric'
+    }),
+    day_of_week: futureDate.toLocaleDateString('en-US', { weekday: 'long' }),
+    day: futureDate.getDate(),
+    month: futureDate.toLocaleDateString('en-US', { month: 'long' }),
+    month_number: futureDate.getMonth() + 1, // 1-12
+    year: futureDate.getFullYear(),
+    timestamp: futureDate.toISOString()
+  };
+}
+
 // API endpoint to get date X days from now
 app.get('/api/date/plus/:days', (req, res) => {
   try {
@@ -31,19 +57,8 @@ app.get('/api/date/plus/:days', (req, res) => {
     // Add specified days
     const futureDate = new Date(currentDate.getTime() + (daysToAdd * 24 * 60 * 60 * 1000));
     
-    // Format the response
-    const response = {
-      current_date: currentDate.toISOString().split('T')[0],
-      days_added: daysToAdd,
-      future_date: futureDate.toISOString().split('T')[0],
-      formatted_date: futureDate.toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      }),
-      timestamp: futureDate.toISOString()
-    };
+    // Format the response using helper function
+    const response = formatDateResponse(currentDate, futureDate, daysToAdd);
     
     res.json(response);
   } catch (error) {
@@ -80,19 +95,8 @@ app.get('/api/date/plus', (req, res) => {
     // Add specified days
     const futureDate = new Date(currentDate.getTime() + (daysToAdd * 24 * 60 * 60 * 1000));
     
-    // Format the response
-    const response = {
-      current_date: currentDate.toISOString().split('T')[0],
-      days_added: daysToAdd,
-      future_date: futureDate.toISOString().split('T')[0],
-      formatted_date: futureDate.toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      }),
-      timestamp: futureDate.toISOString()
-    };
+    // Format the response using helper function
+    const response = formatDateResponse(currentDate, futureDate, daysToAdd);
     
     res.json(response);
   } catch (error) {
